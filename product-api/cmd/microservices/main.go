@@ -17,13 +17,18 @@ import (
 
 func main() {
 
+	// Bind addres of the service from the env variable
 	bindAddress := os.Getenv("BIND_ADDRESS")
+	// Default is :8080
 	if bindAddress == "" {
 		bindAddress = ":8080"
 	}
 
+	// Logger
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	// Dependency injection of logger in products chandler
 	ph := handlers.NewProducts(l)
+	// New router
 	sm := mux.NewRouter()
 
 	// CORS
@@ -72,6 +77,6 @@ func main() {
 	sig := <-sigChan
 	l.Println("Received terminate, graceful shutdown", sig)
 
-	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	s.Shutdown(tc)
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(ctx)
 }
